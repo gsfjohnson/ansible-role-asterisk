@@ -4,19 +4,22 @@
     url: "{{ asterisk_yum_repo_url }}"
     dest: /etc/yum.repos.d/asterisk.repo
     mode: 0640
+  become: yes
 
 - name: import gpg key
   rpm_key:
     key: "{{ asterisk_yum_gpg_url }}"
     state: present
+  become: yes
 
 - name: install
   yum:
     name:
       - asterisk
-      - asterisk-voicemail-plain
+      - asterisk-voicemail
       - asterisk-pjsip
-    enablerepo: "{{ asterisk_enablerepo | default(omit, true) }}"
+    enablerepo: "{{ asterisk_enablerepo | default(omit, True) }}"
+  become: yes
 
 - name: config
   copy:
@@ -28,6 +31,7 @@
   with_items: "{{ asterisk_configs | default([]) | list }}"
   notify:
     - systemd asterisk restart
+  become: yes
 
 - name: systemd asterisk start enable
   systemd:
@@ -38,3 +42,4 @@
   tags:
     - asterisk
     - services
+  become: yes
