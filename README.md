@@ -4,7 +4,7 @@ Install Asterisk
 
 ## Requirements
 
-`gsfjohnson.repo-tucny`
+None
 
 ## Variables
 
@@ -16,14 +16,15 @@ asterisk_svc_state: started
 
 ## Dependencies
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+* Asterisk packages must be available in the repo.  e.g. gsfjohnson.repo-tucny
 
 ## Examples
 
 ```yaml
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+- hosts: voip
+  roles:
+    - role: gsfjohnson.repo-tucny
+    - role: gsfjohnson.asterisk
 ```
 
 ## License
