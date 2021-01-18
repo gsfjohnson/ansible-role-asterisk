@@ -1,25 +1,21 @@
 ---
-- name: import repo
-  get_url:
-    url: "{{ asterisk_yum_repo_url }}"
-    dest: /etc/yum.repos.d/asterisk.repo
-    mode: 0640
-  become: yes
-
-- name: import gpg key
-  rpm_key:
-    key: "{{ asterisk_yum_gpg_url }}"
-    state: present
-  become: yes
-
 - name: install
   yum:
-    name:
-      - asterisk
-      - asterisk-voicemail
-      - asterisk-pjsip
+    name: "{{ asterisk_pkg_names }}"
     enablerepo: "{{ asterisk_enablerepo | default(omit, True) }}"
-  become: yes
+
+- name: systemd service definition
+  copy:
+    src: asterisk.service
+    dest: /usr/lib/systemd/system/asterisk.service
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t
+  notify:
+    - systemd daemon-reload
 
 - name: config
   copy:
@@ -30,16 +26,18 @@
     mode: 0640
   with_items: "{{ asterisk_configs | default([]) | list }}"
   notify:
-    - systemd asterisk restart
-  become: yes
+    - asterisk service reload
 
-- name: systemd asterisk start enable
-  systemd:
+- name: service enabled
+  service:
     name: asterisk
-    state: started
-    enabled: yes
-  when: ansible_distribution_major_version|int > 6
+    enabled: true
   tags:
-    - asterisk
     - services
-  become: yes
+
+- name: "service state={{ asterisk_svc_state }}"
+  service:
+    name: asterisk
+    state: "{{ asterisk_svc_state }}"
+  tags:
+    - services

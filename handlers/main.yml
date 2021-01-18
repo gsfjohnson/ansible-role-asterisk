@@ -1,5 +1,16 @@
 ---
-- name: systemd asterisk restart
-  systemd:
+- name: asterisk service reload
+  service:
+    name: asterisk
+    state: reloaded
+
+- name: asterisk service restart
+  service:
     name: asterisk
     state: restarted
+
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: yes
+  notify:
+    - asterisk service restart

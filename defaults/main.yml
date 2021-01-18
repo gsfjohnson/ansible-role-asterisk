@@ -1,4 +1,4 @@
 ---
 asterisk_enablerepo: "asterisk-18"
-asterisk_yum_repo_url: "https://ast.tucny.com/repo/tucny-asterisk.repo"
-asterisk_yum_gpg_url: "https://ast.tucny.com/repo/RPM-GPG-KEY-dtucny"
+asterisk_pkg_names: "asterisk,asterisk-voicemail,asterisk-pjsip"
+asterisk_svc_state: started
